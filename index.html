@@ -16,10 +16,17 @@ body {
 	background-color: #009900;
 	color: #003600;
 }
+
+#boardContainer > p {
+	display: inline-block;
+	border: 2px solid #00d500;
+	padding: 10px;
+	white-space: pre;
+}
 </style>
 <script>
-const roomParts = [[".....",".....","..0..",".....","....."],[".....",".....","..1..",".....","....."],[".....",".....","..2..",".....","....."]];
-var pos = [3,1];
+const roomParts = [["     ","     ","  0  ","     ","     "],["     ","     ","  1  ","     ","     "],["     ","     ","  2  ","     ","     "]];
+var pos = [3,2];
 
 function init(){
 	header();
@@ -41,27 +48,27 @@ function makeBoard(){
 	}
 	// Detail rooms
 	// * Start at Top-left
-	c += "..***....................<br>";
-	c += "..*S*....................<br>";
+	c += "  ***                    <br>";
+	c += "  *S*                    <br>";
 	c += "#**X**#*****#*****#*****#<br>";
 	// * Insert Rooms
 	for(let h = 0;h<3;h++){
 		for(let i = 0;i<5;i++){
 			c += "*";
 			for(let j = 0;j<4;j++){
-				c += roomParts[r[h][j]][i]+[["*","*",".","*","*"][i],"*"][j<3 ? 0:1];
+				c += roomParts[r[h][j]][i]+[["*","*"," ","*","*"][i],"*"][j<3 ? 0:1];
 			}
 			c += "<br>";
 		}
 		if(h<2){
-			c += "#**.**#**.**#**.**#**.**#<br>";
+			c += "#** **#** **#** **#** **#<br>";
 		}
 	}
 	// * End at Bottom-right
-	c += "#*****#*****#*****#**.**#<br>";
-	c += "....................*E*..<br>";
-	c += "....................***..<br>";
-	document.getElementById("board").innerHTML = c;
+	c += "#*****#*****#*****#** **#<br>";
+	c += "                    *E*  <br>";
+	c += "                    ***  <br>";
+	document.getElementById("boardContainer").innerHTML = "<p id=\"board\">"+c+"</p>";
 };
 
 function footer(){
@@ -111,7 +118,7 @@ function Locks(event){
 	let bLeft = "";
 	let bRight = "";
 	switch(b[specP[1]][specP[0]]){
-		case ".":
+		case " ":
 		case ",":
 			bUp = b.slice(0,specP[1]).join("<br>")+"<br>";
 			bDown = b.slice(specP[1]+1).join("<br>");
@@ -119,6 +126,9 @@ function Locks(event){
 			bRight = b[specP[1]].slice(specP[0]+1)+"<br>";
 			c = bUp+bLeft+"X"+bRight+bDown;
 			pos = specP;
+		break;
+		case "E":
+			c = "You win!"
 		break;
 		default:
 			bUp = b.slice(0,Pbefore[1]).join("<br>")+"<br>";
@@ -135,7 +145,7 @@ function Locks(event){
 </head>
 <body id="body" onload="init()" onkeypress="Locks(event)">
 	<div id="header"></div>
-	<div id="board"></div>
+	<div id="boardContainer"></div>
 	<div id="footer"></div>
 </body>
 </html>
