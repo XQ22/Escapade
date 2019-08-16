@@ -21,6 +21,12 @@ body {
 const roomParts = [[".....",".....","..0..",".....","....."],[".....",".....","..1..",".....","....."],[".....",".....","..2..",".....","....."]];
 var pos = [3,1];
 
+function init(){
+	header();
+	makeBoard();
+	footer();
+};
+
 function makeBoard(){
 	let c = "";
 	// 3×4 rooms
@@ -37,7 +43,7 @@ function makeBoard(){
 	// * Start at Top-left
 	c += "..***....................<br>";
 	c += "..*S*....................<br>";
-	c += "#**.**#*****#*****#*****#<br>";
+	c += "#**X**#*****#*****#*****#<br>";
 	// * Insert Rooms
 	for(let h = 0;h<3;h++){
 		for(let i = 0;i<5;i++){
@@ -56,6 +62,14 @@ function makeBoard(){
 	c += "....................*E*..<br>";
 	c += "....................***..<br>";
 	document.getElementById("board").innerHTML = c;
+};
+
+function footer(){
+	document.getElementById("footer").innerHTML = "<p>You are the X. You move around with WASD or cursor keys. You start at the top-left and end at the bottom-right.</p>";
+};
+
+function header(){
+	document.getElementById("header").innerHTML = "<h1>Escapade</h1>"
 };
 
 function Locks(event){
@@ -119,7 +133,7 @@ function Locks(event){
 };
 </script>
 </head>
-<body id="body" onload="makeBoard()" onkeypress="Locks(event)">
+<body id="body" onload="init()" onkeypress="Locks(event)">
 	<div id="header"></div>
 	<div id="board"></div>
 	<div id="footer"></div>
