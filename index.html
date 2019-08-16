@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Project Escapade</title>
+<link rel="shortcut icon" href="icon.ico"/>
+<style>
+body {
+	background-color: #003300;
+	color: #00e600;
+	text-align: center;
+	font-family: Courier New, Courier, monospace;
+}
+
+.highlighted {
+	background-color: #009900;
+	color: #003600;
+}
+</style>
+<script>
+const roomParts = [[".....",".....","..0..",".....","....."],[".....",".....","..1..",".....","....."],[".....",".....","..2..",".....","....."]];
+var pos = [3,1];
+
+function makeBoard(){
+	let c = "";
+	// 3×4 rooms
+	let r = [];
+	let r1 = [];
+	for(let i = 0;i<3;i++){
+		for(let j = 0;j<4;j++){
+			r1.push(Math.floor(Math.random()*3));
+		}
+		r.push(r1);
+		r1 = [];
+	}
+	// Detail rooms
+	// * Start at Top-left
+	c += "..***....................<br>";
+	c += "..*S*....................<br>";
+	c += "#**.**#*****#*****#*****#<br>";
+	// * Insert Rooms
+	for(let h = 0;h<3;h++){
+		for(let i = 0;i<5;i++){
+			c += "*";
+			for(let j = 0;j<4;j++){
+				c += roomParts[r[h][j]][i]+[["*","*",".","*","*"][i],"*"][j<3 ? 0:1];
+			}
+			c += "<br>";
+		}
+		if(h<2){
+			c += "#**.**#**.**#**.**#**.**#<br>";
+		}
+	}
+	// * End at Bottom-right
+	c += "#*****#*****#*****#**.**#<br>";
+	c += "....................*E*..<br>";
+	c += "....................***..<br>";
+	document.getElementById("board").innerHTML = c;
+};
+
+function Locks(event){
+	let x = event.key;
+	let Pbefore = [pos[0],pos[1]];
+	let specP = [pos[0],pos[1]];
+	switch(x){
+		case "a":
+		case "ArrowLeft":
+		specP[0]--;
+		break;
+		case "w":
+		case "ArrowUp":
+		specP[1]--;
+		break;
+		case "d":
+		case "ArrowRight":
+		specP[0]++;
+		break;
+		case "s":
+		case "ArrowDown":
+		specP[1]++;
+		break;
+	}
+	let b = document.getElementById("board").innerHTML.split("<br>");
+	let c = "";
+	for(let i = 0;i<b.length;i++){
+		for(let j = 0;j<b[i].length;j++){
+			console.log(b[i]);
+			if(b[i][j]==="X"){
+				let bL = b[i].slice(0,j);
+				let bR = b[i].slice(j+1);
+				b[i] = bL+","+bR
+			}
+		}
+	}
+	let bUp = "";
+	let bDown = "";
+	let bLeft = "";
+	let bRight = "";
+	switch(b[specP[1]][specP[0]]){
+		case ".":
+		case ",":
+			bUp = b.slice(0,specP[1]).join("<br>")+"<br>";
+			bDown = b.slice(specP[1]+1).join("<br>");
+			bLeft = b[specP[1]].slice(0,specP[0]);
+			bRight = b[specP[1]].slice(specP[0]+1)+"<br>";
+			c = bUp+bLeft+"X"+bRight+bDown;
+			pos = specP;
+		break;
+		default:
+			bUp = b.slice(0,Pbefore[1]).join("<br>")+"<br>";
+			bDown = b.slice(Pbefore[1]+1).join("<br>");
+			bLeft = b[Pbefore[1]].slice(0,Pbefore[0]);
+			bRight = b[Pbefore[1]].slice(Pbefore[0]+1)+"<br>";
+			c = bUp+bLeft+"X"+bRight+bDown;
+			pos = Pbefore;
+		break;
+	}
+	document.getElementById("board").innerHTML = c;
+};
+</script>
+</head>
+<body id="body" onload="makeBoard()" onkeypress="Locks(event)">
+	<div id="header"></div>
+	<div id="board"></div>
+	<div id="footer"></div>
+</body>
+</html>
