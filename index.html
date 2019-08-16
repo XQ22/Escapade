@@ -12,11 +12,6 @@ body {
 	font-family: Courier New, Courier, monospace;
 }
 
-.highlighted {
-	background-color: #009900;
-	color: #003600;
-}
-
 #boardContainer > p {
 	display: inline-block;
 	border: 2px solid #00d500;
@@ -25,7 +20,24 @@ body {
 }
 </style>
 <script>
-const roomParts = [["     ","     ","  0  ","     ","     "],["     ","     ","  1  ","     ","     "],["     ","     ","  2  ","     ","     "]];
+const chars = ["↓","X","v","▒"," "]; // Start, Character, End, Footstep, Untrodden ground
+const roomParts = [
+	[chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	chars[4]+"╔═╗"+chars[4],
+	chars[4]+"║"+chars[4]+"║"+chars[4],
+	chars[4]+"╚═╝"+chars[4],
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4]],
+	["╔╗"+chars[4]+"╔╗",
+	"╚╝"+chars[4]+"╚╝",
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	"╔╗"+chars[4]+"╔╗",
+	"╚╝"+chars[4]+"╚╝"],
+	[chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4],
+	chars[4]+chars[4]+chars[4]+chars[4]+chars[4]]
+	];
 var pos = [3,2];
 
 function init(){
@@ -48,31 +60,31 @@ function makeBoard(){
 	}
 	// Detail rooms
 	// * Start at Top-left
-	c += "  ***                    <br>";
-	c += "  *S*                    <br>";
-	c += "#**X**#*****#*****#*****#<br>";
+	c += "  ╔═╗                    <br>";
+	c += "  ║"+chars[0]+"║                    <br>";
+	c += "╔═╝"+chars[1]+"╚═╦═════╦═════╦═════╗<br>";
 	// * Insert Rooms
 	for(let h = 0;h<3;h++){
 		for(let i = 0;i<5;i++){
-			c += "*";
+			c += "║";
 			for(let j = 0;j<4;j++){
-				c += roomParts[r[h][j]][i]+[["*","*"," ","*","*"][i],"*"][j<3 ? 0:1];
+				c += roomParts[r[h][j]][i]+[["║","╨",chars[4],"╥","║"][i],"║"][j<3 ? 0:1];
 			}
 			c += "<br>";
 		}
 		if(h<2){
-			c += "#** **#** **#** **#** **#<br>";
+			c += "╠═╡"+chars[4]+"╞═╬═╡"+chars[4]+"╞═╬═╡"+chars[4]+"╞═╬═╡"+chars[4]+"╞═╣<br>";
 		}
 	}
 	// * End at Bottom-right
-	c += "#*****#*****#*****#** **#<br>";
-	c += "                    *E*  <br>";
-	c += "                    ***  <br>";
+	c += "╚═════╩═════╩═════╩═╗"+chars[4]+"╔═╝<br>";
+	c += "                    ║"+chars[2]+"║  <br>";
+	c += "                    ╚═╝  <br>";
 	document.getElementById("boardContainer").innerHTML = "<p id=\"board\">"+c+"</p>";
 };
 
 function footer(){
-	document.getElementById("footer").innerHTML = "<p>You are the X. You move around with WASD or cursor keys. You start at the top-left and end at the bottom-right.</p>";
+	document.getElementById("footer").innerHTML = "<p>You are the "+chars[1]+". You move around with WASD or cursor keys. Go to the bottom right.</p>";
 };
 
 function header(){
@@ -106,10 +118,10 @@ function Locks(event){
 	for(let i = 0;i<b.length;i++){
 		for(let j = 0;j<b[i].length;j++){
 			console.log(b[i]);
-			if(b[i][j]==="X"){
+			if(b[i][j]===chars[1]){
 				let bL = b[i].slice(0,j);
 				let bR = b[i].slice(j+1);
-				b[i] = bL+","+bR
+				b[i] = bL+chars[3]+bR
 			}
 		}
 	}
@@ -118,16 +130,16 @@ function Locks(event){
 	let bLeft = "";
 	let bRight = "";
 	switch(b[specP[1]][specP[0]]){
-		case " ":
-		case ",":
+		case chars[4]:
+		case chars[3]:
 			bUp = b.slice(0,specP[1]).join("<br>")+"<br>";
 			bDown = b.slice(specP[1]+1).join("<br>");
 			bLeft = b[specP[1]].slice(0,specP[0]);
 			bRight = b[specP[1]].slice(specP[0]+1)+"<br>";
-			c = bUp+bLeft+"X"+bRight+bDown;
+			c = bUp+bLeft+chars[1]+bRight+bDown;
 			pos = specP;
 		break;
-		case "E":
+		case chars[2]:
 			c = "You win!"
 		break;
 		default:
@@ -135,7 +147,7 @@ function Locks(event){
 			bDown = b.slice(Pbefore[1]+1).join("<br>");
 			bLeft = b[Pbefore[1]].slice(0,Pbefore[0]);
 			bRight = b[Pbefore[1]].slice(Pbefore[0]+1)+"<br>";
-			c = bUp+bLeft+"X"+bRight+bDown;
+			c = bUp+bLeft+chars[1]+bRight+bDown;
 			pos = Pbefore;
 		break;
 	}
